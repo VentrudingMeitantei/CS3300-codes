@@ -1,0 +1,3 @@
+ERROR: line 56: The first operand of HSTORE must point to the heap.
+Please check near the following source code: 
+ HSTORE v0 4 v1 (line:56 col:15)

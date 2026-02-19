@@ -1,0 +1,45 @@
+# Makefile for running P5.java with given input/output
+# Usage:
+#   make run INPUT=input.txt OUTPUT=output.txt
+
+JAVAC = javac
+JAVA = java
+
+VISITOR_DIR = ./visitor
+VISITOR_SRCS = $(VISITOR_DIR)/RegAlloc.java \
+               $(VISITOR_DIR)/Proc.java \
+               $(VISITOR_DIR)/BasicBlock.java \
+               $(VISITOR_DIR)/Pair.java
+
+VISITOR_CLASSES = $(VISITOR_SRCS:.java=.class)
+
+MAIN = P5
+MAIN_CLASS = $(MAIN).class
+
+# Default target
+all: $(MAIN_CLASS)
+
+# Compile visitor Java files
+$(VISITOR_CLASSES): $(VISITOR_SRCS)
+	@echo "Compiling visitor files..."
+	$(JAVAC) $(VISITOR_SRCS)
+
+# Compile P5.java (depends on visitor classes)
+$(MAIN_CLASS): $(VISITOR_CLASSES) $(MAIN).java
+	@echo "Compiling $(MAIN).java..."
+	$(JAVAC) $(MAIN).java
+
+# Run program with provided input/output
+run: all
+	@if [ -z "$(INPUT)" ] || [ -z "$(OUTPUT)" ]; then \
+		echo "Usage: make run INPUT=<inputfile> OUTPUT=<outputfile>"; \
+		exit 1; \
+	fi
+	@echo "Running $(MAIN) with input $(INPUT)..."
+	$(JAVA) $(MAIN) < $(INPUT) > $(OUTPUT)
+	@echo "Output written to $(OUTPUT)"
+
+# Clean compiled files
+clean:
+	@echo "Cleaning up..."
+	rm -f *.class $(VISITOR_DIR)/*.class
